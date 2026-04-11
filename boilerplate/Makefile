@@ -1,41 +1,54 @@
-obj-m += monitor.o
+# Makefile — Multi-Container Runtime
+# Builds both the user-space engine and the kernel module with a single `make`
 
-KDIR := /lib/modules/$(shell uname -r)/build
-PWD := $(shell pwd)
-# If you want host-built workload binaries to run directly inside an Alpine
-# rootfs, you can override this with WORKLOAD_LDFLAGS=-static when your
-# toolchain supports it.
-WORKLOAD_LDFLAGS ?= -static
+# ── User-space ─────────────────────────────────────────────────────────────────
+CC      = gcc
+CFLAGS  = -Wall -Wextra -g -D_GNU_SOURCE
+LDFLAGS = -lpthread
 
-USER_TARGETS := engine memory_hog cpu_hog io_pulse
+ENGINE_SRC  = engine.c
+ENGINE_BIN  = engine
 
-all: $(USER_TARGETS) module
+WORKLOADS   = cpu_hog io_pulse memory_hog
 
-ci: WORKLOAD_LDFLAGS =
-ci: $(USER_TARGETS)
+# ── Kernel module ───────────────────────────────────────────────────────────────
+obj-m       += monitor.o
+KDIR        := /lib/modules/$(shell uname -r)/build
+PWD         := $(shell pwd)
 
-module: monitor.ko
+# ── Default target ──────────────────────────────────────────────────────────────
+.PHONY: all clean load unload
 
-engine: engine.c monitor_ioctl.h
-	gcc -O2 -Wall -Wextra -o engine engine.c -lpthread
-
-memory_hog: memory_hog.c
-	gcc -O2 -Wall $(WORKLOAD_LDFLAGS) -o memory_hog memory_hog.c
-
-cpu_hog: cpu_hog.c
-	gcc -O2 -Wall $(WORKLOAD_LDFLAGS) -o cpu_hog cpu_hog.c
-
-io_pulse: io_pulse.c
-	gcc -O2 -Wall $(WORKLOAD_LDFLAGS) -o io_pulse io_pulse.c
-
-monitor.ko: monitor.c monitor_ioctl.h
+all: $(ENGINE_BIN) workloads
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
 
-clean:
-	if [ -d "$(KDIR)" ]; then $(MAKE) -C $(KDIR) M=$(PWD) clean; fi
-	rm -f $(USER_TARGETS) *.o *.mod *.mod.c *.symvers *.order
-	rm -f *.log
-	rm -rf logs
-	rm -f /tmp/mini_runtime.sock
+# Engine binary
+$(ENGINE_BIN): $(ENGINE_SRC) monitor_ioctl.h
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-.PHONY: all ci module clean
+# Workload test programs
+.PHONY: workloads
+workloads: $(WORKLOADS)
+
+cpu_hog: cpu_hog.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+io_pulse: io_pulse.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+memory_hog: memory_hog.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ── Kernel module helpers ───────────────────────────────────────────────────────
+load:
+	sudo insmod monitor.ko
+	@echo "Module loaded. Device: /dev/container_monitor"
+
+unload:
+	sudo rmmod monitor
+	@echo "Module unloaded."
+
+# ── Clean ───────────────────────────────────────────────────────────────────────
+clean:
+	rm -f $(ENGINE_BIN) $(WORKLOADS)
+	$(MAKE) -C $(KDIR) M=$(PWD) clean
