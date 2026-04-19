@@ -4,8 +4,9 @@
 
 | Name | SRN |
 |------|-----|
-| [Your Name] | [Your SRN] |
-| [Partner Name] | [Partner SRN] |
+| Tanvi. B. Shetty | PES1UG24AM302 |
+| Maansi. S     | PES1UG24AM302     |
+
 
 ---
 
@@ -105,41 +106,55 @@ ps aux | grep defunct
 *Two containers (alpha, beta) running simultaneously under one supervisor process.*
 
 `[INSERT SCREENSHOT: sudo ./engine start alpha ... && sudo ./engine start beta ... && ps aux | grep engine]`
+<img width="1031" height="42" alt="image" src="https://github.com/user-attachments/assets/5a0df8d5-3dc5-48c7-b55c-c6bf853c8ef9" />
+<img width="1010" height="48" alt="image" src="https://github.com/user-attachments/assets/8f4f3da2-21a7-4031-b549-e9a8f695e04e" />
+<img width="904" height="70" alt="image" src="https://github.com/user-attachments/assets/0a299ed7-b530-4078-878a-2d1547954aed" />
 
 ### Screenshot 2 — Metadata Tracking
 *Output of `sudo ./engine ps` showing ID, PID, state, start time, and memory limits.*
 
 `[INSERT SCREENSHOT: sudo ./engine ps]`
+<img width="932" height="131" alt="image" src="https://github.com/user-attachments/assets/9150c459-45c1-4a12-8c1c-db44bf3c41e9" />
+
 
 ### Screenshot 3 — Bounded-Buffer Logging
 *Log file contents captured through the logging pipeline.*
 
 `[INSERT SCREENSHOT: sudo ./engine logs alpha  &&  cat logs/alpha.log]`
+<img width="814" height="205" alt="image" src="https://github.com/user-attachments/assets/c086ef25-4f87-46bc-abd3-c3508c72d164" />
+
 
 ### Screenshot 4 — CLI and IPC
 *A CLI command being issued (start/stop/ps) and the supervisor responding via the UNIX domain socket.*
 
 `[INSERT SCREENSHOT: sudo ./engine stop alpha  → supervisor terminal shows "Sent SIGTERM"]`
+<img width="593" height="44" alt="image" src="https://github.com/user-attachments/assets/bff3e32c-5536-4c21-985d-d1b49a99501a" />
 
 ### Screenshot 5 — Soft-Limit Warning
 *dmesg showing SOFT LIMIT event for memtest container.*
 
 `[INSERT SCREENSHOT: dmesg | grep "SOFT LIMIT"]`
+<img width="950" height="41" alt="image" src="https://github.com/user-attachments/assets/feeb8b65-0bac-425f-bcf0-b2cc9e7e0e3d" />
 
 ### Screenshot 6 — Hard-Limit Enforcement
 *dmesg showing HARD LIMIT kill event; ps showing container state changed to "killed".*
 
 `[INSERT SCREENSHOT: dmesg | grep "HARD LIMIT"  &&  sudo ./engine ps]`
+<img width="1023" height="116" alt="image" src="https://github.com/user-attachments/assets/9b6d0b6a-aadb-4521-a05e-94c2873152e1" />
+
 
 ### Screenshot 7 — Scheduling Experiment
 *Two CPU-bound containers at different nice values; measurable difference in completion time.*
 
 `[INSERT SCREENSHOT: time output for nice=0 vs nice=19]`
+<img width="730" height="292" alt="image" src="https://github.com/user-attachments/assets/3bbbf415-31dd-4512-b20c-fd113563988a" />
 
 ### Screenshot 8 — Clean Teardown
 *No zombie processes after supervisor shutdown.*
 
 `[INSERT SCREENSHOT: ps aux | grep defunct  (empty output)]`
+<img width="1897" height="153" alt="image" src="https://github.com/user-attachments/assets/49e07d16-620b-4cae-aa01-a54818d26112" />
+
 
 ---
 
