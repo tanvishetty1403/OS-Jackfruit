@@ -5,7 +5,7 @@
 | Name | SRN |
 |------|-----|
 | Tanvi. B. Shetty | PES1UG24AM302 |
-| Maansi. S     | PES1UG24AM302     |
+| Maansi. S     | PES1UG24AM913     |
 
 
 ---
@@ -264,8 +264,8 @@ Two containers running identical CPU-bound workload (`cpu_hog`, which computes i
 
 | Container | nice value | Wall-clock time (seconds) |
 |-----------|-----------|--------------------------|
-| cpu1      | 0         | ~10s                     |
-| cpu2      | 19        | ~48s                     |
+| cpu1      | 0         | ~0.037s                     |
+| cpu2      | 19        | ~0.043s                     |
 
 *(Replace with your actual measured values)*
 
